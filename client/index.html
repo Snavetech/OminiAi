@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OmniMind AI — A powerful all-in-one AI assistant with chat, deep research, code execution, image generation, and document analysis.">
+  <title>OmniMind AI</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/sidebar.css">
+  <link rel="stylesheet" href="css/chat.css">
+  <link rel="stylesheet" href="css/code.css">
+  <link rel="stylesheet" href="css/modals.css">
+
+  <!-- Marked.js for Markdown rendering -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"></script>
+  <!-- Highlight.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css">
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+</head>
+<body>
+  <div id="app">
+    <!-- ═══ SIDEBAR ═══ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="brand-icon">🧠</div>
+          <span class="brand-text">OmniMind AI</span>
+        </div>
+        <button class="new-chat-btn" id="new-chat-btn" data-tooltip="Start a new conversation">
+          <span>✨</span> New Chat
+        </button>
+        <div class="sidebar-search">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-chats" placeholder="Search conversations...">
+        </div>
+      </div>
+
+      <div class="chat-list" id="chat-list">
+        <!-- Chat items populated by JS -->
+      </div>
+
+      <div class="sidebar-footer">
+        <button class="btn btn-ghost" id="memory-btn" data-tooltip="Manage memories">🧠 Memory</button>
+        <button class="btn btn-ghost" id="settings-btn" data-tooltip="Settings">⚙️ Settings</button>
+      </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ═══ MAIN CONTENT ═══ -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <div class="top-bar">
+        <div class="top-bar-left">
+          <button class="btn-icon" id="toggle-sidebar" data-tooltip="Toggle sidebar">☰</button>
+          <select class="personality-selector" id="personality-selector">
+            <option value="professional">💼 Professional</option>
+            <option value="creative">🎨 Creative</option>
+            <option value="coding">💻 Coding Expert</option>
+            <option value="research">🔬 Research Analyst</option>
+            <option value="friendly">😊 Friendly</option>
+          </select>
+        </div>
+
+        <div class="top-bar-center">
+          <div class="mode-toggles">
+            <button class="mode-toggle active" data-mode="chat" id="mode-chat">💬 <span class="mode-label">Chat</span></button>
+            <button class="mode-toggle" data-mode="research" id="mode-research">🔬 <span class="mode-label">Research</span></button>
+            <button class="mode-toggle" data-mode="code" id="mode-code">💻 <span class="mode-label">Code</span></button>
+            <button class="mode-toggle" data-mode="image" id="mode-image">🎨 <span class="mode-label">Image</span></button>
+          </div>
+        </div>
+
+        <div class="top-bar-right">
+          <button class="btn-icon" id="agent-toggle" data-tooltip="Agent Mode: Auto-detect tools">🤖</button>
+          <button class="btn-icon" id="theme-toggle" data-tooltip="Toggle theme">🌙</button>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="chat-area" id="chat-area">
+        <div class="messages-container" id="messages-container">
+          <!-- Welcome Screen -->
+          <div class="welcome-screen" id="welcome-screen">
+            <div class="welcome-logo">🧠</div>
+            <h1 class="welcome-title">OmniMind AI</h1>
+            <p class="welcome-subtitle">Your all-in-one AI assistant. Chat, research, code, create — all in one place.</p>
+            <div class="welcome-cards">
+              <div class="welcome-card" data-prompt="Explain quantum computing in simple terms">
+                <div class="card-icon">💡</div>
+                <div class="card-text">Explain a complex topic simply</div>
+              </div>
+              <div class="welcome-card" data-prompt="Research the latest breakthroughs in AI for 2026">
+                <div class="card-icon">🔬</div>
+                <div class="card-text">Deep research on any topic</div>
+              </div>
+              <div class="welcome-card" data-prompt="Write a Python script to analyze CSV data and create visualizations">
+                <div class="card-icon">💻</div>
+                <div class="card-text">Write & run code instantly</div>
+              </div>
+              <div class="welcome-card" data-prompt="Generate an image of a futuristic city at sunset with flying cars">
+                <div class="card-icon">🎨</div>
+                <div class="card-text">Generate stunning images</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code Interpreter Panel -->
+      <div class="code-panel" id="code-panel">
+        <div class="code-panel-header">
+          <h3>💻 Python Interpreter</h3>
+          <button class="btn btn-ghost" id="close-code-panel">✕ Close</button>
+        </div>
+        <div class="pyodide-status" id="pyodide-status">
+          <span class="status-dot"></span>
+          <span id="pyodide-status-text">Python not loaded</span>
+        </div>
+        <div class="code-panel-body">
+          <div class="code-editor-pane">
+            <div class="code-editor-toolbar">
+              <span>editor.py</span>
+              <button class="run-btn" id="run-code-btn">▶ Run</button>
+            </div>
+            <textarea id="code-editor" spellcheck="false" placeholder="# Write your Python code here...
+import numpy as np
+print('Hello from OmniMind!')"></textarea>
+          </div>
+          <div class="code-output-pane">
+            <div class="code-output-toolbar">
+              <span>Output</span>
+              <button class="btn btn-ghost" id="clear-output-btn" style="font-size:0.75rem">Clear</button>
+            </div>
+            <div id="code-output"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area" id="input-area">
+        <div class="input-wrapper">
+          <div class="file-preview-area" id="file-preview-area"></div>
+          <div class="input-container">
+            <div class="input-attachments">
+              <button class="btn-icon" id="attach-file-btn" data-tooltip="Attach file">📎</button>
+            </div>
+            <textarea id="chat-input" rows="1" placeholder="Message OmniMind AI..."></textarea>
+            <button class="send-btn" id="send-btn" disabled data-tooltip="Send message">➤</button>
+          </div>
+          <div class="input-footer">
+            <span id="mode-indicator">Chat Mode</span>
+            <span>OmniMind AI — Free & Open Source</span>
+          </div>
+        </div>
+      </div>
+      <input type="file" id="file-input" class="hidden" multiple accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg,.gif,.webp">
+    </main>
+  </div>
+
+  <!-- ═══ MODALS ═══ -->
+
+  <!-- Memory Modal -->
+  <div class="modal-backdrop" id="memory-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>🧠 Memory</h2>
+        <button class="btn-icon" onclick="closeModal('memory-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:16px;display:flex;gap:8px">
+          <input type="text" id="memory-input" placeholder="Add a memory..." style="flex:1;padding:8px 12px;background:var(--bg-input);border:1px solid var(--border-primary);border-radius:var(--radius-md);color:var(--text-primary);font-family:var(--font-primary);outline:none;">
+          <button class="btn btn-primary" id="add-memory-btn">Add</button>
+        </div>
+        <div class="memory-list" id="memory-list">
+          <p style="color:var(--text-tertiary);text-align:center;padding:24px">No memories saved yet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settings-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>⚙️ Settings</h2>
+        <button class="btn-icon" onclick="closeModal('settings-modal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-group">
+          <label>Gemini API Key</label>
+          <input type="password" id="setting-gemini-key" placeholder="Enter your Gemini API key">
+          <p class="hint">Get your free key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent-primary)">aistudio.google.com</a></p>
+        </div>
+        <div class="settings-group">
+          <label>HuggingFace Token</label>
+          <input type="password" id="setting-hf-token" placeholder="Enter your HuggingFace token">
+          <p class="hint">Get your free token at <a href="https://huggingface.co/settings/tokens" target="_blank" style="color:var(--accent-primary)">huggingface.co</a></p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('settings-modal')">Cancel</button>
+        <button class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/utils.js"></script>
+  <script src="js/theme.js"></script>
+  <script src="js/markdown.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/research.js"></script>
+  <script src="js/codeInterpreter.js"></script>
+  <script src="js/imageGen.js"></script>
+  <script src="js/fileHandler.js"></script>
+  <script src="js/memory.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

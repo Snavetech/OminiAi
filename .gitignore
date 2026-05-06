@@ -1,0 +1,14 @@
+node_modules/
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.DS_Store
+dist/
+build/
+coverage/
+*.log
+*.db
+*.db-shm
+*.db-wal

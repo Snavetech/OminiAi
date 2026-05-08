@@ -1,67 +1,65 @@
 // ============================================================================
-// OmniMind AI — Google Gemini Service
+// OmniMind AI — OpenRouter Service (formerly Google Gemini)
 // ============================================================================
-// Handles all interactions with Google Gemini API (free tier - Flash models).
-// Supports streaming responses, vision (multimodal), and structured output.
+// Handles interactions with OpenRouter using the OpenAI SDK.
 // ============================================================================
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import OpenAI from 'openai';
 
-let genAI = null;
-let model = null;
+let openai = null;
+const MODEL = 'google/gemini-1.5-flash';
 
-/**
- * Initialize the Gemini API client.
- */
 export function initGemini(apiKey) {
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {
-    console.warn('⚠️  Gemini API key not configured. Chat will use fallback mode.');
+    console.warn('⚠️  OpenRouter API key not configured. Chat will use fallback mode.');
     return false;
   }
-  genAI = new GoogleGenerativeAI(apiKey);
-  model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-  console.log('✅ Gemini API initialized (gemini-1.5-flash)');
+  openai = new OpenAI({
+    baseURL: 'https://openrouter.ai/api/v1',
+    apiKey: apiKey,
+    defaultHeaders: {
+      'HTTP-Referer': 'https://github.com/Snavetech/OminiAi', 
+      'X-Title': 'OmniMind AI'
+    }
+  });
+  console.log('✅ OpenRouter API initialized (using ' + MODEL + ')');
   return true;
 }
 
-/**
- * Check if Gemini is available.
- */
 export function isGeminiAvailable() {
-  return model !== null;
+  return openai !== null;
 }
 
-/**
- * Generate a streaming response from Gemini.
- * @param {string} systemPrompt - System instruction
- * @param {Array} history - Conversation history [{role, content}]
- * @param {string} userMessage - Current user message
- * @param {Function} onChunk - Callback for each text chunk
- * @param {Function} onDone - Callback when generation completes
- * @param {Function} onError - Callback on error
- */
 export async function streamChat(systemPrompt, history, userMessage, onChunk, onDone, onError) {
-  if (!model) {
-    onError(new Error('Gemini not initialized'));
+  if (!openai) {
+    onError(new Error('OpenRouter not initialized'));
     return;
   }
 
   try {
-    // Build the chat with system instruction
-    const chat = model.startChat({
-      systemInstruction: { role: 'user', parts: [{ text: systemPrompt }] },
-      history: history.map(msg => ({
-        role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }]
-      }))
+    const messages = [];
+    if (systemPrompt) {
+      messages.push({ role: 'system', content: systemPrompt });
+    }
+    
+    // Map history to OpenAI format
+    for (const msg of history) {
+      messages.push({ role: msg.role === 'assistant' ? 'assistant' : 'user', content: msg.content });
+    }
+    
+    // Add current user message
+    messages.push({ role: 'user', content: userMessage });
+
+    const stream = await openai.chat.completions.create({
+      model: MODEL,
+      messages: messages,
+      stream: true,
     });
 
-    // Stream the response
-    const result = await chat.sendMessageStream(userMessage);
     let fullResponse = '';
 
-    for await (const chunk of result.stream) {
-      const text = chunk.text();
+    for await (const chunk of stream) {
+      const text = chunk.choices[0]?.delta?.content || '';
       if (text) {
         fullResponse += text;
         onChunk(text);
@@ -70,64 +68,75 @@ export async function streamChat(systemPrompt, history, userMessage, onChunk, on
 
     onDone(fullResponse);
   } catch (error) {
-    console.error('Gemini stream error:', error.message);
+    console.error('OpenRouter stream error:', error.message);
     onError(error);
   }
 }
 
-/**
- * Generate a single (non-streaming) response from Gemini.
- */
 export async function generateContent(prompt, systemPrompt = '') {
-  if (!model) throw new Error('Gemini not initialized');
+  if (!openai) throw new Error('OpenRouter not initialized');
 
-  const genModel = systemPrompt 
-    ? genAI.getGenerativeModel({ model: 'gemini-1.5-flash', systemInstruction: { role: 'user', parts: [{ text: systemPrompt }] } })
-    : model;
+  const messages = [];
+  if (systemPrompt) {
+    messages.push({ role: 'system', content: systemPrompt });
+  }
+  messages.push({ role: 'user', content: prompt });
 
-  const result = await genModel.generateContent(prompt);
-  return result.response.text();
+  const result = await openai.chat.completions.create({
+    model: MODEL,
+    messages: messages,
+  });
+  return result.choices[0].message.content;
 }
 
-/**
- * Analyze an image with Gemini Vision.
- * @param {string} base64Data - Base64-encoded image data
- * @param {string} mimeType - Image MIME type (e.g., 'image/jpeg')
- * @param {string} prompt - User's question about the image
- */
 export async function analyzeImage(base64Data, mimeType, prompt = 'Describe this image in detail.') {
-  if (!model) throw new Error('Gemini not initialized');
+  if (!openai) throw new Error('OpenRouter not initialized');
 
-  const imagePart = {
-    inlineData: { data: base64Data, mimeType }
-  };
-
-  const result = await model.generateContent([prompt, imagePart]);
-  return result.response.text();
+  // OpenAI vision format
+  const imageUrl = `data:${mimeType};base64,${base64Data}`;
+  
+  const result = await openai.chat.completions.create({
+    model: MODEL, // gemini-1.5-flash on openrouter supports vision
+    messages: [
+      {
+        role: "user",
+        content: [
+          { type: "text", text: prompt },
+          { type: "image_url", image_url: { url: imageUrl } }
+        ]
+      }
+    ]
+  });
+  
+  return result.choices[0].message.content;
 }
 
-/**
- * Analyze a document's text content with Gemini.
- */
 export async function analyzeDocument(documentText, prompt) {
-  if (!model) throw new Error('Gemini not initialized');
+  if (!openai) throw new Error('OpenRouter not initialized');
 
   const fullPrompt = `Here is a document's content:\n\n---\n${documentText}\n---\n\nUser's question: ${prompt}`;
-  const result = await model.generateContent(fullPrompt);
-  return result.response.text();
+  
+  const result = await openai.chat.completions.create({
+    model: MODEL,
+    messages: [{ role: 'user', content: fullPrompt }]
+  });
+  
+  return result.choices[0].message.content;
 }
 
-/**
- * Generate a short conversation title from the first message.
- */
 export async function generateTitle(message) {
-  if (!model) return 'New Chat';
+  if (!openai) return 'New Chat';
 
   try {
-    const result = await model.generateContent(
-      `Generate a very short title (max 5 words) for a conversation starting with: "${message.slice(0, 200)}". Return ONLY the title.`
-    );
-    const title = result.response.text().trim().replace(/["']/g, '');
+    const result = await openai.chat.completions.create({
+      model: MODEL,
+      messages: [{ 
+        role: 'user', 
+        content: `Generate a very short title (max 5 words) for a conversation starting with: "${message.slice(0, 200)}". Return ONLY the title.` 
+      }]
+    });
+    
+    const title = result.choices[0].message.content.trim().replace(/["']/g, '');
     return title.slice(0, 60) || 'New Chat';
   } catch {
     return 'New Chat';

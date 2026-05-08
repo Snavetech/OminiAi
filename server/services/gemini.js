@@ -7,7 +7,7 @@
 import OpenAI from 'openai';
 
 let openai = null;
-const MODEL = 'google/gemini-1.5-flash';
+const MODEL = 'google/gemini-2.5-flash';
 
 export function initGemini(apiKey) {
   if (!apiKey || apiKey === 'your_gemini_api_key_here') {

@@ -54,7 +54,7 @@ export async function streamChat(systemPrompt, history, userMessage, onChunk, on
       model: MODEL,
       messages: messages,
       stream: true,
-      max_tokens: 8000,
+      max_tokens: 4000,
     });
 
     let fullResponse = '';
@@ -86,7 +86,7 @@ export async function generateContent(prompt, systemPrompt = '') {
   const result = await openai.chat.completions.create({
     model: MODEL,
     messages: messages,
-    max_tokens: 8000,
+    max_tokens: 4000,
   });
   return result.choices[0].message.content;
 }
@@ -108,7 +108,7 @@ export async function analyzeImage(base64Data, mimeType, prompt = 'Describe this
         ]
       }
     ],
-    max_tokens: 8000,
+    max_tokens: 4000,
   });
   
   return result.choices[0].message.content;
@@ -122,7 +122,7 @@ export async function analyzeDocument(documentText, prompt) {
   const result = await openai.chat.completions.create({
     model: MODEL,
     messages: [{ role: 'user', content: fullPrompt }],
-    max_tokens: 8000,
+    max_tokens: 4000,
   });
   
   return result.choices[0].message.content;

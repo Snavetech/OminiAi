@@ -54,6 +54,7 @@ export async function streamChat(systemPrompt, history, userMessage, onChunk, on
       model: MODEL,
       messages: messages,
       stream: true,
+      max_tokens: 8000,
     });
 
     let fullResponse = '';
@@ -85,6 +86,7 @@ export async function generateContent(prompt, systemPrompt = '') {
   const result = await openai.chat.completions.create({
     model: MODEL,
     messages: messages,
+    max_tokens: 8000,
   });
   return result.choices[0].message.content;
 }
@@ -105,7 +107,8 @@ export async function analyzeImage(base64Data, mimeType, prompt = 'Describe this
           { type: "image_url", image_url: { url: imageUrl } }
         ]
       }
-    ]
+    ],
+    max_tokens: 8000,
   });
   
   return result.choices[0].message.content;
@@ -118,7 +121,8 @@ export async function analyzeDocument(documentText, prompt) {
   
   const result = await openai.chat.completions.create({
     model: MODEL,
-    messages: [{ role: 'user', content: fullPrompt }]
+    messages: [{ role: 'user', content: fullPrompt }],
+    max_tokens: 8000,
   });
   
   return result.choices[0].message.content;
@@ -133,7 +137,8 @@ export async function generateTitle(message) {
       messages: [{ 
         role: 'user', 
         content: `Generate a very short title (max 5 words) for a conversation starting with: "${message.slice(0, 200)}". Return ONLY the title.` 
-      }]
+      }],
+      max_tokens: 100,
     });
     
     const title = result.choices[0].message.content.trim().replace(/["']/g, '');

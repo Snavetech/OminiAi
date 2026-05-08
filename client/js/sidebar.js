@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Sidebar Controller
+// Snave AI — Sidebar Controller
 // ============================================================================
 
 const Sidebar = (() => {
@@ -39,15 +39,15 @@ const Sidebar = (() => {
   function renderList(list) {
     const container = document.getElementById('chat-list');
     if (list.length === 0) {
-      container.innerHTML = `<p style="text-align:center;color:var(--text-tertiary);padding:24px;font-size:0.85rem">No conversations yet</p>`;
+      container.innerHTML = `<p style="text-align:center;color:var(--text-tertiary);padding:24px;font-size:0.8125rem">No conversations yet</p>`;
       return;
     }
     container.innerHTML = list.map(conv => `
       <div class="chat-list-item ${conv.id === activeId ? 'active' : ''}" data-id="${conv.id}">
-        <span class="chat-icon">💬</span>
+        <span class="chat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
         <span class="chat-title">${escapeHtml(conv.title)}</span>
         <span class="chat-date">${formatRelativeDate(conv.updated_at || conv.created_at)}</span>
-        <button class="delete-chat-btn" data-delete="${conv.id}" title="Delete">🗑</button>
+        <button class="delete-chat-btn" data-delete="${conv.id}" title="Delete"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></button>
       </div>
     `).join('');
 

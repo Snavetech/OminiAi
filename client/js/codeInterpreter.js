@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Code Interpreter (Pyodide Integration)
+// Snave AI — Code Interpreter (Pyodide Integration)
 // ============================================================================
 
 const CodeInterpreter = (() => {

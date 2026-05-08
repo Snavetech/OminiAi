@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Chat Controller
+// Snave AI — Chat Controller
 // ============================================================================
 
 const Chat = (() => {
@@ -30,16 +30,7 @@ const Chat = (() => {
       if (!isStreaming && input.value.trim()) sendMessage();
     });
 
-    // Welcome card clicks
-    document.querySelectorAll('.welcome-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const prompt = card.dataset.prompt;
-        if (prompt) {
-          document.getElementById('chat-input').value = prompt;
-          sendMessage();
-        }
-      });
-    });
+
   }
 
   async function sendMessage() {
@@ -47,9 +38,11 @@ const Chat = (() => {
     const message = input.value.trim();
     if (!message) return;
 
-    // Hide welcome screen
+    // Hide welcome screen and chips
     const welcome = document.getElementById('welcome-screen');
     if (welcome) welcome.style.display = 'none';
+    const chips = document.getElementById('input-chips');
+    if (chips) chips.style.display = 'none';
 
     // Get current mode
     const mode = App.getMode();
@@ -199,7 +192,7 @@ const Chat = (() => {
 
     let filesHtml = '';
     if (metadata?.files) {
-      filesHtml = metadata.files.map(f => `<div class="file-badge">📄 ${escapeHtml(f)}</div>`).join('');
+      filesHtml = metadata.files.map(f => `<div class="file-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> ${escapeHtml(f)}</div>`).join('');
     }
 
     let contentHtml;
@@ -210,7 +203,7 @@ const Chat = (() => {
     }
 
     msgEl.innerHTML = `
-      <div class="message-avatar">${isUser ? '👤' : '🧠'}</div>
+      <div class="message-avatar">${isUser ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z"/><circle cx="12" cy="15" r="2"/></svg>'}</div>
       <div class="message-body">
         <div class="message-content">${contentHtml}</div>
       </div>
@@ -226,7 +219,7 @@ const Chat = (() => {
     el.className = 'message ai-message';
     el.id = 'typing-indicator';
     el.innerHTML = `
-      <div class="message-avatar">🧠</div>
+      <div class="message-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z"/><circle cx="12" cy="15" r="2"/></svg></div>
       <div class="message-body">
         <div class="typing-dots"><span></span><span></span><span></span></div>
       </div>
@@ -245,7 +238,7 @@ const Chat = (() => {
       currentStreamEl = document.createElement('div');
       currentStreamEl.className = 'message ai-message';
       currentStreamEl.innerHTML = `
-        <div class="message-avatar">🧠</div>
+        <div class="message-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z"/><circle cx="12" cy="15" r="2"/></svg></div>
         <div class="message-body">
           <div class="message-content" id="stream-content"></div>
         </div>
@@ -276,11 +269,11 @@ const Chat = (() => {
   }
 
   function showToolBadge(task) {
-    const icons = { research: '🔬', code: '💻', image: '🎨' };
+    const icons = { research: '⬡', code: '⬡', image: '⬡' };
     const container = document.getElementById('messages-container');
     const badge = document.createElement('div');
     badge.className = 'research-progress';
-    badge.innerHTML = `${icons[task.tool] || '🤖'} Agent decided: ${task.reasoning}`;
+    badge.innerHTML = `<div class="spinner"></div> Agent: ${task.reasoning}`;
     container.appendChild(badge);
     setTimeout(() => badge.remove(), 5000);
   }
@@ -294,8 +287,7 @@ const Chat = (() => {
       el.className = 'research-progress';
       container.appendChild(el);
     }
-    const stageIcons = { searching: '🔍', reading: '📖', analyzing: '🧠', writing: '✍️' };
-    el.innerHTML = `<div class="spinner"></div> ${stageIcons[data.stage] || '⏳'} ${data.message}`;
+    el.innerHTML = `<div class="spinner"></div> ${data.message}`;
     scrollToBottom();
   }
 
@@ -310,42 +302,18 @@ const Chat = (() => {
     if (!welcome) {
       container.innerHTML = `
         <div class="welcome-screen" id="welcome-screen">
-          <div class="welcome-logo">🧠</div>
-          <h1 class="welcome-title">OmniMind AI</h1>
-          <p class="welcome-subtitle">Your all-in-one AI assistant. Chat, research, code, create — all in one place.</p>
-          <div class="welcome-cards">
-            <div class="welcome-card" data-prompt="Explain quantum computing in simple terms">
-              <div class="card-icon">💡</div>
-              <div class="card-text">Explain a complex topic simply</div>
-            </div>
-            <div class="welcome-card" data-prompt="Research the latest breakthroughs in AI for 2026">
-              <div class="card-icon">🔬</div>
-              <div class="card-text">Deep research on any topic</div>
-            </div>
-            <div class="welcome-card" data-prompt="Write a Python script to analyze CSV data and create visualizations">
-              <div class="card-icon">💻</div>
-              <div class="card-text">Write & run code instantly</div>
-            </div>
-            <div class="welcome-card" data-prompt="Generate an image of a futuristic city at sunset with flying cars">
-              <div class="card-icon">🎨</div>
-              <div class="card-text">Generate stunning images</div>
-            </div>
-          </div>
+          <h1 class="welcome-title">What can I help with?</h1>
         </div>
       `;
-      // Re-attach click handlers
-      container.querySelectorAll('.welcome-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const prompt = card.dataset.prompt;
-          if (prompt) {
-            document.getElementById('chat-input').value = prompt;
-            sendMessage();
-          }
-        });
-      });
+    } else {
+      welcome.style.display = '';
     }
     currentStreamEl = null;
     streamedText = '';
+
+    // Show chips again
+    const chips = document.getElementById('input-chips');
+    if (chips) chips.style.display = '';
   }
 
   async function loadMessages(conversationId) {

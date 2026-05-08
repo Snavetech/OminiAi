@@ -37,7 +37,8 @@ export function isHFAvailable() {
 export async function generateText(prompt, maxTokens = 1024) {
   if (!hfToken) throw new Error('HuggingFace not initialized');
 
-  const response = await fetch(`${HF_API_URL}/${TEXT_MODEL}`, {
+  const HF_TEXT_URL = 'https://router.huggingface.co/hf-inference/models';
+  const response = await fetch(`${HF_TEXT_URL}/${TEXT_MODEL}`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${hfToken}`,
@@ -74,7 +75,8 @@ export async function generateText(prompt, maxTokens = 1024) {
 export async function generateImage(prompt) {
   if (!hfToken) throw new Error('HuggingFace not initialized');
 
-  const response = await fetch(`${HF_API_URL}/${IMAGE_MODEL}`, {
+  const HF_IMAGE_URL = 'https://router.huggingface.co/hf-inference/models';
+  const response = await fetch(`${HF_IMAGE_URL}/${IMAGE_MODEL}`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${hfToken}`,

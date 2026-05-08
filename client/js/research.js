@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Research Mode (client-side glue - main logic in chat.js)
+// Snave AI — Research Mode (client-side glue - main logic in chat.js)
 // ============================================================================
 
 const Research = (() => {

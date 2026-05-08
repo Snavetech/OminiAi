@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Client Utilities
+// Snave AI — Client Utilities
 // ============================================================================
 
 const API_BASE = window.location.origin + '/api';

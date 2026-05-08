@@ -1,5 +1,5 @@
 /* ==========================================================================
-   OmniMind AI — Code Interpreter Styles
+   Snave AI — Code Interpreter Styles
    ========================================================================== */
 
 .code-panel {
@@ -14,16 +14,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-sm) var(--space-md);
+  padding: 8px var(--space-md);
   border-bottom: 1px solid var(--border-primary);
   background: var(--bg-secondary);
 }
 .code-panel-header h3 {
-  font-size: 0.9rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  letter-spacing: 0.01em;
+}
+.code-panel-header h3 svg {
+  width: 16px;
+  height: 16px;
+  color: var(--accent-primary);
 }
 
 .code-panel-body {
@@ -44,11 +50,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-xs) var(--space-md);
+  padding: 6px var(--space-md);
   border-bottom: 1px solid var(--border-primary);
   background: var(--bg-tertiary);
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
 }
 
 #code-editor {
@@ -57,8 +65,8 @@
   background: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-mono);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-size: 0.8125rem;
+  line-height: 1.65;
   padding: var(--space-md);
   border: none;
   resize: none;
@@ -78,11 +86,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-xs) var(--space-md);
+  padding: 6px var(--space-md);
   border-bottom: 1px solid var(--border-primary);
   background: var(--bg-tertiary);
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
 }
 
 #code-output {
@@ -90,8 +100,8 @@
   overflow: auto;
   padding: var(--space-md);
   font-family: var(--font-mono);
-  font-size: 0.85rem;
-  line-height: 1.5;
+  font-size: 0.8125rem;
+  line-height: 1.55;
   white-space: pre-wrap;
   color: var(--text-primary);
 }
@@ -111,14 +121,15 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  padding: 6px var(--space-md);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-tertiary);
   border-bottom: 1px solid var(--border-primary);
 }
 .pyodide-status .status-dot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: var(--accent-warning);
 }
@@ -126,22 +137,23 @@
 .pyodide-status.loading .status-dot { animation: pulse 1s infinite; }
 
 .run-btn {
-  padding: var(--space-xs) var(--space-md);
+  padding: 4px 12px;
   background: var(--accent-success);
   color: white;
   border: none;
   border-radius: var(--radius-sm);
   font-family: var(--font-primary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
+  gap: 4px;
   transition: all var(--transition-fast);
+  letter-spacing: 0.02em;
 }
-.run-btn:hover { filter: brightness(1.1); }
-.run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.run-btn:hover { filter: brightness(1.08); }
+.run-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
 @media (max-width: 768px) {
   .code-panel-body { flex-direction: column; }

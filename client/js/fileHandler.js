@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — File Handler (Upload + Parse)
+// Snave AI — File Handler (Upload + Parse)
 // ============================================================================
 
 const FileHandler = (() => {
@@ -7,9 +7,10 @@ const FileHandler = (() => {
 
   function init() {
     const fileInput = document.getElementById('file-input');
+    // Attach is now handled from plus menu (menu-attach) in app.js
+    // But also support legacy attach-file-btn if present
     const attachBtn = document.getElementById('attach-file-btn');
-
-    attachBtn.addEventListener('click', () => fileInput.click());
+    if (attachBtn) attachBtn.addEventListener('click', () => fileInput.click());
 
     fileInput.addEventListener('change', (e) => {
       const files = Array.from(e.target.files);
@@ -58,7 +59,8 @@ const FileHandler = (() => {
     const area = document.getElementById('file-preview-area');
     area.innerHTML = attachedFiles.map((f, i) => `
       <div class="file-preview-item">
-        📄 ${escapeHtml(f.name)} (${formatSize(f.size)})
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        ${escapeHtml(f.name)} (${formatSize(f.size)})
         <span class="remove-file" onclick="FileHandler.removeFile(${i})">✕</span>
       </div>
     `).join('');
@@ -75,7 +77,7 @@ const FileHandler = (() => {
   }
 
   async function analyzeWithMessage(message, files) {
-    Chat.addMessage('assistant', '📄 Analyzing files...');
+    Chat.addMessage('assistant', 'Analyzing files...');
 
     try {
       for (const file of files) {
@@ -99,7 +101,7 @@ const FileHandler = (() => {
           if (data.success) {
             Chat.addMessage('assistant', data.analysis);
           } else {
-            Chat.addMessage('assistant', `⚠️ Error: ${data.message}`);
+            Chat.addMessage('assistant', `Error: ${data.message}`);
           }
         } else if (ext === 'pdf') {
           // Parse PDF client-side with PDF.js
@@ -114,7 +116,7 @@ const FileHandler = (() => {
       }
     } catch (error) {
       removeLastAiMessage();
-      Chat.addMessage('assistant', `⚠️ File analysis failed: ${error.message}`);
+      Chat.addMessage('assistant', `File analysis failed: ${error.message}`);
     }
 
     // Clear attached files
@@ -141,7 +143,7 @@ const FileHandler = (() => {
       });
       const data = await response.json();
       removeLastAiMessage();
-      Chat.addMessage('assistant', data.success ? data.analysis : `⚠️ ${data.message}`);
+      Chat.addMessage('assistant', data.success ? data.analysis : `Error: ${data.message}`);
       return;
     }
   }
@@ -167,7 +169,7 @@ const FileHandler = (() => {
       const response = await fetch(`${API_BASE}/files/upload`, { method: 'POST', body: formData });
       const data = await response.json();
       removeLastAiMessage();
-      Chat.addMessage('assistant', data.success ? data.analysis : `⚠️ ${data.message}`);
+      Chat.addMessage('assistant', data.success ? data.analysis : `Error: ${data.message}`);
     }
   }
 
@@ -197,7 +199,7 @@ const FileHandler = (() => {
           streamEl = document.createElement('div');
           streamEl.className = 'message ai-message';
           streamEl.innerHTML = `
-            <div class="message-avatar">🧠</div>
+            <div class="message-avatar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2h-2V6a4 4 0 0 0-4-4z"/><circle cx="12" cy="15" r="2"/></svg></div>
             <div class="message-body"><div class="message-content"></div></div>
           `;
           container.appendChild(streamEl);

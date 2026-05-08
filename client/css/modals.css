@@ -1,13 +1,13 @@
 /* ==========================================================================
-   OmniMind AI — Modal & Overlay Styles
+   Snave AI — Modal & Overlay Styles
    ========================================================================== */
 
 /* ─── Modal Backdrop ─────────────────────────────────────────────────────── */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
   z-index: var(--z-modal);
   display: flex;
   align-items: center;
@@ -27,12 +27,12 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   width: 90%;
-  max-width: 560px;
+  max-width: 520px;
   max-height: 80vh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transform: scale(0.95) translateY(20px);
+  transform: scale(0.97) translateY(10px);
   transition: transform var(--transition-base);
 }
 .modal-backdrop.visible .modal {
@@ -47,11 +47,17 @@
   border-bottom: 1px solid var(--border-primary);
 }
 .modal-header h2 {
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 650;
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
+  gap: 10px;
+  letter-spacing: -0.01em;
+}
+.modal-header h2 svg {
+  width: 18px;
+  height: 18px;
+  color: var(--accent-primary);
 }
 
 .modal-body {
@@ -79,19 +85,19 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-sm);
-  padding: var(--space-md);
+  padding: 12px;
   background: var(--bg-surface);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   transition: border-color var(--transition-fast);
 }
-.memory-item:hover { border-color: var(--accent-primary); }
+.memory-item:hover { border-color: var(--border-accent); }
 
 .memory-category {
-  font-size: 0.7rem;
+  font-size: 0.625rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   padding: 2px 8px;
   border-radius: var(--radius-sm);
   background: var(--bg-tertiary);
@@ -101,7 +107,7 @@
 
 .memory-content {
   flex: 1;
-  font-size: 0.85rem;
+  font-size: 0.8125rem;
   color: var(--text-primary);
   line-height: 1.5;
 }
@@ -109,8 +115,10 @@
 .memory-delete {
   cursor: pointer;
   color: var(--text-tertiary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   transition: color var(--transition-fast);
+  display: flex;
+  align-items: center;
 }
 .memory-delete:hover { color: var(--accent-error); }
 
@@ -120,30 +128,32 @@
 }
 .settings-group label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.8125rem;
   font-weight: 600;
   margin-bottom: var(--space-sm);
   color: var(--text-primary);
+  letter-spacing: 0.01em;
 }
 .settings-group input,
 .settings-group select {
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
+  padding: 8px var(--space-md);
   background: var(--bg-input);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-family: var(--font-primary);
-  font-size: 0.9rem;
+  font-size: 0.8125rem;
   outline: none;
   transition: border-color var(--transition-fast);
 }
 .settings-group input:focus,
 .settings-group select:focus {
   border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(99, 132, 255, 0.08);
 }
 .settings-group .hint {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   color: var(--text-tertiary);
   margin-top: var(--space-xs);
 }

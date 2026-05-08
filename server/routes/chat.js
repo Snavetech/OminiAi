@@ -6,9 +6,10 @@ import { Router } from 'express';
 import { v4 as uuidv4 } from 'uuid';
 import { setupSSE, sendSSE, sanitizeInput, apiError } from '../utils/helpers.js';
 import { createConversation, getConversation, listConversations, updateConversationTitle, deleteConversation, addMessage, getMessages } from '../db/database.js';
-import { handleChat, detectTask } from '../services/orchestrator.js';
+import { handleChat, handleResearch, detectTask } from '../services/orchestrator.js';
 import { generateTitle } from '../services/gemini.js';
 import { extractMemories } from '../services/memory.js';
+import { generateImage } from '../services/imageGen.js';
 
 const router = Router();
 
@@ -50,40 +51,69 @@ router.post('/chat', async (req, res) => {
   // Stream the response
   let fullResponse = '';
 
-  await handleChat(
-    convId,
-    sanitized,
-    personality,
-    // onChunk
-    (chunk) => {
-      fullResponse += chunk;
-      sendSSE(res, 'chunk', { text: chunk });
-    },
-    // onDone
-    async (response) => {
-      // Save assistant message
-      addMessage(convId, 'assistant', fullResponse, { personality, task: taskInfo.tool });
+  // Helper to save conversation state and end
+  const saveAndEnd = async (text, taskName) => {
+    addMessage(convId, 'assistant', text, { personality, task: taskName });
+    const messages = getMessages(convId);
+    if (messages.length <= 2) {
+      const title = await generateTitle(sanitized);
+      updateConversationTitle(convId, title);
+      sendSSE(res, 'title', { title });
+    }
+    extractMemories(sanitized, text).catch(() => {});
+    sendSSE(res, 'done', { conversationId: convId });
+    res.end();
+  };
 
-      // Generate title for new conversations (first message)
-      const messages = getMessages(convId);
-      if (messages.length <= 2) {
-        const title = await generateTitle(sanitized);
-        updateConversationTitle(convId, title);
-        sendSSE(res, 'title', { title });
-      }
-
-      // Auto-extract memories (async, don't block)
-      extractMemories(sanitized, fullResponse).catch(() => {});
-
-      sendSSE(res, 'done', { conversationId: convId });
-      res.end();
-    },
-    // onError
-    (error) => {
-      sendSSE(res, 'error', { message: error.message });
+  if (taskInfo.tool === 'image') {
+    try {
+      sendSSE(res, 'chunk', { text: `*Generating image...*\n\n` });
+      const imgResult = await generateImage(sanitized, true);
+      fullResponse = `Here is your generated image:\n\n![${imgResult.enhancedPrompt}](${imgResult.dataUrl})\n\n*Enhanced prompt: ${imgResult.enhancedPrompt}*`;
+      sendSSE(res, 'chunk', { text: `Here is your generated image:\n\n![${imgResult.enhancedPrompt}](${imgResult.dataUrl})\n\n*Enhanced prompt: ${imgResult.enhancedPrompt}*` });
+      await saveAndEnd(fullResponse, 'image');
+    } catch (e) {
+      sendSSE(res, 'error', { message: 'Image generation failed: ' + e.message });
       res.end();
     }
-  );
+  } else if (taskInfo.tool === 'research') {
+    await handleResearch(
+      sanitized,
+      (progress) => sendSSE(res, 'progress', progress),
+      (chunk) => {
+        fullResponse += chunk;
+        sendSSE(res, 'chunk', { text: chunk });
+      },
+      async (finalText, sourcesList) => {
+        if (sourcesList) {
+          fullResponse += `\n\n### Sources\n${sourcesList}`;
+          sendSSE(res, 'chunk', { text: `\n\n### Sources\n${sourcesList}` });
+        }
+        await saveAndEnd(fullResponse, 'research');
+      },
+      (error) => {
+        sendSSE(res, 'error', { message: error.message });
+        res.end();
+      }
+    );
+  } else {
+    await handleChat(
+      convId,
+      sanitized,
+      personality,
+      (chunk) => {
+        fullResponse += chunk;
+        sendSSE(res, 'chunk', { text: chunk });
+      },
+      async () => {
+        await saveAndEnd(fullResponse, taskInfo.tool);
+      },
+      (error) => {
+        sendSSE(res, 'error', { message: error.message });
+        res.end();
+      }
+    );
+  }
 });
 
 // ─── Conversation CRUD ───────────────────────────────────────────────────

@@ -100,7 +100,12 @@ const Chat = (() => {
             showToolBadge(data.task);
           }
         })
+        .on('progress', (data) => {
+          removeTypingIndicator();
+          showResearchProgress(data);
+        })
         .on('chunk', (data) => {
+          hideResearchProgress();
           removeTypingIndicator();
           appendToStream(data.text);
         })

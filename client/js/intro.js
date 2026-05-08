@@ -14,11 +14,11 @@ const Intro = (() => {
     const overlay = document.getElementById('intro-overlay');
     if (!overlay) return;
 
-    // If already seen, remove overlay immediately
-    if (localStorage.getItem(STORAGE_KEY)) {
-      overlay.remove();
-      return;
-    }
+    // FOR TESTING: Commenting out seen check
+    // if (localStorage.getItem(STORAGE_KEY)) {
+    //   overlay.remove();
+    //   return;
+    // }
 
     // Show the intro
     runAnimation(overlay);
@@ -104,7 +104,11 @@ const Intro = (() => {
   }
 
   // Auto-init on DOM ready
-  document.addEventListener('DOMContentLoaded', init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
   return { init };
 })();

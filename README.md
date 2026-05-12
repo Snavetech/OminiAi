@@ -1,8 +1,8 @@
-# 🧠 OmniMind AI
+# 🧠 Snave AI
 
 **A powerful, all-in-one AI assistant platform** with chat, deep research, code execution, image generation, and document analysis — powered entirely by free APIs and open-source tools.
 
-![OmniMind AI](https://img.shields.io/badge/OmniMind-AI-38bdf8?style=for-the-badge&logo=brain&logoColor=white)
+![Snave AI](https://img.shields.io/badge/Snave-AI-38bdf8?style=for-the-badge&logo=brain&logoColor=white)
 
 ---
 
@@ -65,7 +65,7 @@
 ## 🏗️ Architecture
 
 ```
-OmniMind AI
+Snave AI
 ├── server/              # Node.js + Express backend
 │   ├── services/        # AI service integrations
 │   │   ├── gemini.js    # Google Gemini API

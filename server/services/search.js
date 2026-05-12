@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Web Search Service
+// Snave AI — Web Search Service
 // ============================================================================
 // Free web search via DuckDuckGo HTML scraping (no API key required).
 // Extracts search results and scrapes page content for deep research.

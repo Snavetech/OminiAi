@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — OpenRouter Service (formerly Google Gemini)
+// Snave AI — OpenRouter Service (formerly Google Gemini)
 // ============================================================================
 // Handles interactions with OpenRouter using the OpenAI SDK.
 // ============================================================================
@@ -18,8 +18,8 @@ export function initGemini(apiKey) {
     baseURL: 'https://openrouter.ai/api/v1',
     apiKey: apiKey,
     defaultHeaders: {
-      'HTTP-Referer': 'https://github.com/Snavetech/OminiAi', 
-      'X-Title': 'OmniMind AI'
+      'HTTP-Referer': 'https://github.com/Snavetech/SnaveAi', 
+      'X-Title': 'Snave AI'
     }
   });
   console.log('✅ OpenRouter API initialized (using ' + MODEL + ')');

@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — SQLite Database Layer
+// Snave AI — SQLite Database Layer
 // ============================================================================
 // Manages all persistent storage: conversations, messages, memory, settings.
 // Auto-creates tables on first run.
@@ -10,7 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DB_PATH = path.join(__dirname, 'omnimind.db');
+const DB_PATH = path.join(__dirname, 'snave.db');
 
 let db;
 

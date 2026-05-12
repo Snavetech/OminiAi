@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Image Generation Service
+// Snave AI — Image Generation Service
 // ============================================================================
 
 import * as huggingface from './huggingface.js';

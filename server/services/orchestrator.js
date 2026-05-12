@@ -1,7 +1,7 @@
 // ============================================================================
-// OmniMind AI — AI Orchestrator
+// Snave AI — AI Orchestrator
 // ============================================================================
-// The brain of OmniMind — decides which models/tools to use for each request.
+// The brain of Snave — decides which models/tools to use for each request.
 // Routes tasks to appropriate services and manages context.
 // ============================================================================
 

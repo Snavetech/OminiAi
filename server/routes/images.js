@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Image Generation Routes
+// Snave AI — Image Generation Routes
 // ============================================================================
 
 import { Router } from 'express';

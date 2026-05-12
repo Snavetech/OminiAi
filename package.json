@@ -1,7 +1,7 @@
 {
-  "name": "omnimind-ai-workspace",
+  "name": "snave-ai-workspace",
   "version": "1.0.0",
-  "description": "OmniMind AI Workspace root package",
+  "description": "Snave AI Workspace root package",
   "scripts": {
     "start": "cd server && npm start",
     "dev": "cd server && npm run dev"

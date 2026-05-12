@@ -1,7 +1,7 @@
 {
-  "name": "omnimind-server",
+  "name": "snave-server",
   "version": "1.0.0",
-  "description": "OmniMind AI - Backend Server",
+  "description": "Snave AI - Backend Server",
   "main": "index.js",
   "type": "module",
   "scripts": {

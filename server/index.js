@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Server Entry Point
+// Snave AI — Server Entry Point
 // ============================================================================
 // Express server that serves the frontend and all API routes.
 // ============================================================================
@@ -52,7 +52,7 @@ app.use('/api/files', fileRoutes);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
-    name: 'OmniMind AI',
+    name: 'Snave AI',
     version: '1.0.0',
     services: {
       gemini: initGemini.initialized || false,
@@ -75,7 +75,7 @@ app.use((err, req, res, next) => {
 // ─── Start Server ────────────────────────────────────────────────────────
 
 async function start() {
-  console.log('\n🧠 OmniMind AI — Starting...\n');
+  console.log('\n🧠 Snave AI — Starting...\n');
 
   // Initialize database
   initDatabase();
@@ -90,7 +90,7 @@ async function start() {
   }
 
   app.listen(PORT, () => {
-    console.log(`\n🚀 OmniMind AI running at http://localhost:${PORT}\n`);
+    console.log(`\n🚀 Snave AI running at http://localhost:${PORT}\n`);
   });
 }
 

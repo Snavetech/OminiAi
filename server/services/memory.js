@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — Memory Management Service
+// Snave AI — Memory Management Service
 // ============================================================================
 
 import { addMemory, listMemories, searchMemories, deleteMemory } from '../db/database.js';

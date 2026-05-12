@@ -1,5 +1,5 @@
 // ============================================================================
-// OmniMind AI — HuggingFace Inference Service
+// Snave AI — HuggingFace Inference Service
 // ============================================================================
 // Fallback text generation + image generation via HuggingFace free API.
 // ============================================================================

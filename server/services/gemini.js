@@ -7,12 +7,12 @@
 import OpenAI from 'openai';
 
 let openai = null;
-let currentModel = 'llama-3.3-70b-versatile';
-const VISION_MODEL = 'llama-3.2-11b-vision-preview';
+let currentModel = 'openai/gpt-oss-120b';
+const VISION_MODEL = 'openai/gpt-oss-20b';
 const BASE_URL = 'https://api.groq.com/openai/v1';
 
 export function initGemini(apiKey) {
-  const key = apiKey || process.env.GROQ_API_KEY || process.env.GEMINI_API_KEY || process.env.AGENTROUTER_API_KEY;
+  const key = apiKey || process.env.GROQ_API_KEY || (process.env.GEMINI_API_KEY?.startsWith('gsk_') ? process.env.GEMINI_API_KEY : null);
 
   if (!key || key.startsWith('your_') || key.includes('_here')) {
     console.warn('⚠️  Groq API key not configured. Chat will use fallback mode.');
@@ -20,7 +20,7 @@ export function initGemini(apiKey) {
     return false;
   }
 
-  currentModel = process.env.GROQ_MODEL || process.env.AI_MODEL || 'llama-3.3-70b-versatile';
+  currentModel = process.env.GROQ_MODEL || process.env.AI_MODEL || 'openai/gpt-oss-120b';
 
   openai = new OpenAI({
     baseURL: BASE_URL,

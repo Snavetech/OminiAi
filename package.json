@@ -1,0 +1,9 @@
+{
+  "name": "snave-ai-workspace",
+  "version": "1.0.0",
+  "description": "Snave AI Workspace root package",
+  "scripts": {
+    "start": "cd server && npm start",
+    "dev": "cd server && npm run dev"
+  }
+}

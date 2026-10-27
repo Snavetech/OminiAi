@@ -83,7 +83,12 @@ async function start() {
   initDatabase();
 
   // Initialize AI services
-  const geminiOk = initGemini(process.env.GROQ_API_KEY || (process.env.GEMINI_API_KEY?.startsWith('gsk_') ? process.env.GEMINI_API_KEY : null));
+  const apiKey = process.env.AGENTROUTER_API_KEY ||
+                 process.env.AGENT_ROUTER_API_KEY ||
+                 process.env.AI_API_KEY ||
+                 process.env.GROQ_API_KEY ||
+                 process.env.GEMINI_API_KEY;
+  const geminiOk = initGemini(apiKey);
   const hfOk = initHuggingFace(process.env.HF_API_TOKEN);
 
   if (!geminiOk && !hfOk) {

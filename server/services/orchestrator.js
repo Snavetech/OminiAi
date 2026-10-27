@@ -8,7 +8,7 @@
 import * as gemini from './gemini.js';
 import * as huggingface from './huggingface.js';
 import * as search from './search.js';
-import { PERSONALITIES, TOOL_DECISION_PROMPT, RESEARCH_SYSTEM_PROMPT } from '../utils/prompts.js';
+import { PERSONALITIES, TOOL_DECISION_PROMPT, RESEARCH_SYSTEM_PROMPT, getTemporalContext, getCreatorIdentity } from '../utils/prompts.js';
 import { getRecentMessages, searchMemories } from '../db/database.js';
 
 /**
@@ -31,9 +31,8 @@ export async function detectTask(message) {
     return { tool: 'code', reasoning: 'User wants to run or write code' };
   }
 
-  // Research keywords
-  if (/\b(research|search|find|look\s+up|what\s+is|latest|current|news|recent|2024|2025|2026)\b/i.test(lower) &&
-      lower.length > 30) {
+  // Research / live web search keywords (check for queries asking for live/recent data)
+  if (/\b(research|search\s+for|search\s+the|look\s+up|what\s+is|who\s+won|latest|current|news|recent|today'?s|events|2024|2025|2026)\b/i.test(lower)) {
     return { tool: 'research', reasoning: 'User is asking about current/factual information' };
   }
 
@@ -46,7 +45,7 @@ export async function detectTask(message) {
  */
 export async function buildSystemPrompt(personality = 'professional', conversationId = null) {
   const persona = PERSONALITIES[personality] || PERSONALITIES.professional;
-  let systemPrompt = persona.system;
+  let systemPrompt = `${persona.system}\n\n${getCreatorIdentity()}\n\n${getTemporalContext()}`;
 
   // Inject relevant memories if available
   try {

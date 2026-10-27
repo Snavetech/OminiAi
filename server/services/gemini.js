@@ -7,7 +7,7 @@
 import OpenAI from 'openai';
 
 let openai = null;
-let currentModel = 'gpt-5.6-sol';
+let currentModel = 'gpt-6-astra';
 let currentBaseUrl = 'https://agentrouter.org/v1';
 let isAgentRouter = true;
 
@@ -77,10 +77,10 @@ function cleanErrorMessage(msg) {
  * If user requested gpt-4o (which has no channel in default group), alias to gpt-5.6-sol.
  */
 function resolveModel(modelName, isRouter) {
-  if (isRouter && (modelName === 'gpt-4o' || !modelName)) {
-    return 'gpt-5.6-sol';
+  if (isRouter && (modelName === 'gpt-4o' || modelName === 'gpt-5.6-sol' || !modelName)) {
+    return 'gpt-6-astra';
   }
-  return modelName || (isRouter ? 'gpt-5.6-sol' : 'openai/gpt-oss-120b');
+  return modelName || (isRouter ? 'gpt-6-astra' : 'openai/gpt-oss-120b');
 }
 
 export function initGemini(apiKey) {
@@ -116,7 +116,7 @@ export function initGemini(apiKey) {
                         process.env.AGENT_ROUTER_MODEL ||
                         process.env.AI_MODEL ||
                         process.env.GROQ_MODEL ||
-                        (isAgentRouter ? 'gpt-5.6-sol' : 'openai/gpt-oss-120b');
+                        (isAgentRouter ? 'gpt-6-astra' : 'openai/gpt-oss-120b');
 
   currentModel = resolveModel(requestedModel, isAgentRouter);
 

@@ -36,10 +36,15 @@ router.post('/chat', async (req, res) => {
   // Save user message
   addMessage(convId, 'user', sanitized);
 
-  // Detect task type if agent mode is on
+  // Detect task type (always check if user requested live search/research; full auto-detect if agentMode is on)
   let taskInfo = { tool: 'chat', reasoning: 'Default chat' };
   if (agentMode) {
     taskInfo = await detectTask(sanitized);
+  } else {
+    const lower = sanitized.toLowerCase();
+    if (/\b(search\s+(the\s+web|online|google|duckduckgo)|look\s+up\s+online|latest\s+news|today'?s\s+news|recent\s+news|current\s+events|breaking\s+news)\b/i.test(lower)) {
+      taskInfo = { tool: 'research', reasoning: 'Real-time web search requested' };
+    }
   }
 
   // Setup SSE
